@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="id-ID">
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <title>Inventory Management</title>
+    <style>
+        /* Global Styles */
+        * {
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            background-color: #f3f4f6;
+            color: #333;
+        }
+
+        /* Menu Navigation */
+        .menu {
+            display: flex;
+            background-color: #5351f1;
+            padding: 10px;
+            gap: 1rem;
+            justify-content: flex-start;
+            border-bottom: 2px solid #ddd;
+        }
+        
+        .menu button {
+            padding: 10px 20px;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #3575dc;
+            transition: background-color 0.3s;
+            font-size: 1rem;
+        }
+
+        .menu button.active, .menu button:hover {
+            background-color: #275cb9;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .content{
+            display: none;
+        }
+
+        .tabel {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .tabel th, .tabel td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        .tabel th {
+            background-color: #3575dc;
+            color: white;
+        }
+
+        .tabel .rows:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        #inform {
+            margin: 20px 0;
+        }
+
+        #inform label {
+            display: block;
+            margin: 8px 0 4px;
+            font-weight: bold;
+            color: #3575dc;
+        }
+
+        #inform input, #inform select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        #inform button, .menu button {
+            background-color: #5351f1;
+            color: #fff;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        #inform button:hover, .menu button:hover {
+            background-color: #4143c8;
+        }
+        
+        .master{
+            width: 50px;
+            height: 50px;
+        }
+        
+        @media (max-width: 768px) {
+            .menu {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+        .dashboard {
+            max-width: 1200px;
+            width: 100%;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .dashboard-header {
+            grid-column: 1 / -1;
+            background-color: #d7e8f3;
+            padding: 20px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            font-size: 1.5em;
+            color: #333;
+        }
+
+        .card {
+            background-color: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            min-height: 150px;
+        }
+
+        /* Additional space for larger cards */
+        .large-card {
+            grid-column: 1 / -1;
+            min-height: 250px;
+        }
+    </style>
+</head>
+<body>
+    <div class="menu">
+        <button onclick="openpage(event,'dashboard')"> Dashboard</button>
+        <button onclick="openpage(event, 'first')"><i class="fas fa-toolbox"></i> Master</button>
+        <button onclick="openpage(event, 'second'),input()"><i class="fas fa-pencil"></i> Input</button>
+        <button onclick="openpage(event, 'stats')"><i class="fas fa-signal"></i> Statistik</button>
+    </div>
+    
+    <div id="container" class="container">
+        <div id="first" class="content">
+            <h2>Master Data</h2>
+            <select id="selkat">
+                <option value="call barang(1)">alat tulis</option>
+                <option value="call barang(2)">buku tulis</option>
+            </select>
+            <button onclick="sendreq(selkat)">Send</button>
+            <button class="master"><h1 class="fas fa-toolbox"></h1></button>
+            <table id="table" class="tabel">
+                <thead id="head"></thead>
+                <tbody id="row" class="rows"></tbody>
+            </table>
+        </div>
+        
+        <div id="second" class="content">
+            <h2>Input Data</h2>
+            <form id="inform"></form>
+        </div>
+
+        <div id="dashboard" class="content">
+        <div class="dashboard">
+            <div class="dashboard-header">
+                Dashboard
+            </div>
+    
+            <div class="card">
+                <div>
+                    <h1>Current Stock</h1>
+                </div>
+                <div style="padding: 20px;" id="listitem">
+                    <ul>
+                        <li>Buku Tulis</li>
+                        <li>Alat Tulis</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="card">
+            </div>
+            
+            <div class="card">
+            </div>
+    
+            <div class="card large-card">
+            </div>
+        </div>
+        </div>
+
+    </div>
+
+        <script>
+            function openpage(evt, name){
+            var i, conten, pages;
+            conten = document.getElementsByClassName("content");
+            for(i=0;i<conten.length;i++){
+                conten[i].style.display="none";
+            }
+            pages = document.getElementById(name);
+            pages.style.display="block";
+            append(pages);
+            }
+
+            function append(divs){
+                var contain = document.getElementById("container");
+                contain.appendChild(divs);
+            }
+
+            function sendreq(select){
+                document.getElementById("row").innerHTML="";
+                document.getElementById("head").innerHTML="";
+                var data = select.value;
+                var xhr = new XMLHttpRequest();
+                xhr.open("post","http://localhost:3000/api/mysql");
+                xhr.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
+                xhr.send(new URLSearchParams({
+                    'query':data
+                }));
+                xhr.onreadystatechange = function () {
+                    if(this.readyState != 4){return;}
+                    if(this.status==200){
+                       
+                        var data = JSON.parse(this.responseText)
+
+                        var tbody = document.getElementById("row");
+                            for (var i = 0; i < data.length; i++) {
+                                var row = document.createElement("tr");
+                                for (var key in data[i]) {
+                                    if (data[i].hasOwnProperty(key)) { 
+                                        var cell = document.createElement("td");
+                                        cell.innerHTML = data[i][key];
+                                        row.appendChild(cell);
+                                    }
+                                }
+                                row.className = "rows";
+                                tbody.appendChild(row);
+                            }
+                            var thead = document.getElementById("head"); 
+                            if (thead && data.length > 0) {
+                                var headerRow = document.createElement("tr");
+                                for (var key in data[0]) {
+                                    if (data[0].hasOwnProperty(key)) {
+                                        console.log(key);
+                                        var th = document.createElement("th");
+                                        th.innerHTML = key.charAt(0).toUpperCase() + key.slice(1); 
+                                        headerRow.appendChild(th);
+                                    }
+                                }
+                                thead.appendChild(headerRow);
+                            }
+                            
+                    }
+                    document.getElementById("query").value="";
+                };
+                
+            }
+            function input(){
+                document.getElementById("inform").innerHTML="";
+
+                var id = document.createElement("input");
+                var kat = document.createElement("select");
+                var nama = document.createElement("input");
+                var satuan = document.createElement("select");
+                var harga = document.createElement("input");
+                var container = document.getElementById("inform");
+                var list = [id,kat,nama,satuan,harga];
+                var label = ["id","kategori","nama","satuan","harga"];
+                
+
+                appends(container,list, label);
+                setattrib(kat,{"id":"kategori"});
+                setattrib(satuan,{"id":"satuan"});
+                setattrib(id,{"onfocus":"getmodel(kategori,'katmod'),getmodel(satuan,'satmod')"});
+            }
+
+            function setattrib(element, attrib){
+                for(var key in attrib){
+                    element.setAttribute(key,attrib[key]);
+                }
+            }
+            function appends(element, list, labelist){
+                for(var lis in list){
+                    var label = document.createElement("label");
+                    label.innerHTML = labelist[lis]+"<br>";
+                    label.classList.add("lblin");
+                    element.appendChild(label);
+                    element.appendChild(list[lis]);
+                    setattrib(list[lis],{"name":labelist[lis]});
+                    element.appendChild(document.createElement("br"));
+                    element.appendChild(document.createElement("p"));
+                }
+            }
+
+            function getmodel(id, query){
+                id.innerHTML="";
+                var url = window.location.href;
+                var port = "3000", sub = "/api/model";
+                var xhr = new XMLHttpRequest();
+                var name = id.getAttribute("name");
+                xhr.open("post","http://localhost:3000/api/model");
+                xhr.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
+                xhr.send(new URLSearchParams({
+                    "query":"call "+query
+                }));
+                xhr.onreadystatechange = function (){
+                    if(xhr.readyState!=4){return;}
+                    if(xhr.status==200){
+                        var model = JSON.parse(this.responseText);
+                        for(var i =0;i<model.length;i++){
+                            var opt = document.createElement("option");
+                            for (var key in model[i]) {
+                                if(model[i].hasOwnProperty(key)){
+                                    opt.setAttribute("value",model[i][key]);
+                                    opt.innerHTML=model[i][key];
+                                    id.appendChild(opt);
+                                }
+                            }
+                            
+                            
+                        }
+                    }else{
+                        window.alert("error, check your connection");
+                    }
+                };
+            }
+
+            function getstok(divname){
+                var container = document.getElementById(divname);
+                
+            }
+        </script>
+    </body>
+</html>
